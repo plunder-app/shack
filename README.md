@@ -74,9 +74,9 @@ $ ip addr show plunderVM-b5987
 To stop a virtual machine `chest` will communicate with the qmp socket `/tmp/qmp-<UUID>`, we can stop our recently started Virtual machine with the command:
 
 ```
-$ sudo ./chest vm start
-
+$  sudo ./chest vm stop --id b5987b
 ```
+
 **Note** the `stop` command will wait for 10 seconds before "terminating" the virtual machine.
 **Additional Note**, the `/tmp/qmp-<UUID>` will be removed, however the `<UUID>.qcow2` will need removing manually.
 
