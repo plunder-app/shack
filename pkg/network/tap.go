@@ -38,13 +38,13 @@ func (e *Environment) DeleteTap(tapName string) error {
 	// Find Tap
 	tapLink, err := netlink.LinkByName(tapName)
 	if err != nil {
-		return err
+		return fmt.Errorf("Could not delete %s: %v", tapName, err)
 	}
 
 	// Remove Tap device
 	err = netlink.LinkDel(tapLink)
 	if err != nil {
-		return fmt.Errorf("Could not delete %s: %v", e.BridgeName, err)
+		return fmt.Errorf("Could not delete %s: %v", tapName, err)
 	}
 	return nil
 
