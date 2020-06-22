@@ -120,30 +120,3 @@ func (e *Environment) BridgeUp() error {
 	}
 	return netlink.LinkSetUp(e.BridgeLink)
 }
-
-// //CreateBridge will create a new Layer 2 bridge
-// func CreateBridge() error {
-// 	// Create a new network bridge
-// 	la := netlink.NewLinkAttrs()
-// 	la.Name = "plunder"
-
-// 	mybridge := &netlink.Bridge{LinkAttrs: la}
-// 	err := netlink.LinkAdd(mybridge)
-// 	if err != nil {
-// 		fmt.Printf("could not add %s: %v\n", la.Name, err)
-// 	}
-
-// 	tap := &netlink.Tuntap{LinkAttrs: netlink.LinkAttrs{Name: "plunderVM"}, Mode: netlink.TUNTAP_MODE_TAP}
-// 	err = netlink.LinkAdd(tap)
-// 	if err != nil {
-// 		fmt.Printf("could not add %s: %v\n", la.Name, err)
-// 	}
-
-// 	netlink.LinkSetMaster(tap, mybridge)
-// 	addr, _ := netlink.ParseAddr("192.168.1.1/24")
-// 	netlink.AddrAdd(mybridge, addr)
-
-// 	netlink.LinkSetUp(mybridge)
-
-// 	return nil
-// }

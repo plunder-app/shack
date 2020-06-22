@@ -2,9 +2,11 @@ package vmm
 
 import (
 	"fmt"
-	"log"
 	"os"
+	"os/exec"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"context"
 
@@ -20,20 +22,29 @@ import (
 // VMM - Virtual Machine Manager
 
 //Start w
-func Start(mac, uuid, nicPrefix string) error {
+func Start(mac, uuid, nicPrefix string, foreground bool) error {
 
 	params := make([]string, 0, 32)
+
 	// Rootfs
 	params = append(params, "-drive", fmt.Sprintf("file=%s.qcow2,if=virtio,aio=threads,format=qcow2", uuid))
+
 	// Network
 	net := fmt.Sprintf("tap,model=virtio-net-pci,mac=%s,ifname=%s-%s", mac, nicPrefix, uuid)
 	params = append(params, "-nic", net)
+
 	// kvm
 	params = append(params, "-enable-kvm", "-cpu", "host")
-	// qmp socket
-	params = append(params, "-daemonize", "-qmp", fmt.Sprintf("unix:/tmp/qmp-%s,server,nowait", uuid))
+
 	// resources
 	params = append(params, "-m", "1024", "-display", "none")
+
+	if foreground {
+		params = append(params, "-curses")
+		return foreGroundRunner(params)
+	}
+
+	params = append(params, "-daemonize", "-qmp", fmt.Sprintf("unix:/tmp/qmp-%s,server,nowait", uuid))
 
 	// LaunchCustomQemu should return as soon as the instance has launched as we
 	// are using the --daemonize flag.  It will set up a unix domain socket
@@ -83,4 +94,24 @@ func Stop(uuid string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func foreGroundRunner(params []string) error {
+
+	path := "qemu-system-x86_64"
+
+	/* #nosec */
+	cmd := exec.Command(path, params...)
+	cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
+
+	err := cmd.Start()
+	if err != nil {
+		return fmt.Errorf("Qemu error [%v]", err)
+	}
+	log.Printf("Waiting for command to finish...")
+	err = cmd.Wait()
+	if err != nil {
+		return fmt.Errorf("Shell error [%v]", err)
+	}
+	return nil
 }

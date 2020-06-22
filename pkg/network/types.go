@@ -49,7 +49,7 @@ func ExampleConfig() string {
 	cfg := Environment{}
 	cfg.BridgeAddress = "192.168.1.1/24"
 	cfg.BridgeName = "plunder"
-	cfg.NicPrefix = "plunderVM"
+	cfg.NicPrefix = "plndrVM"
 	cfg.NicMacPrefix = "c0:ff:ee:"
 
 	b, _ := yaml.Marshal(cfg)

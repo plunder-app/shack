@@ -6,12 +6,13 @@ import (
 
 	"github.com/plunder-app/chest/pkg/network"
 	"github.com/plunder-app/chest/pkg/vmm"
-	"github.com/prometheus/common/log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 )
 
 var vmID string
+var foreground bool
 
 // Release - this struct contains the release information populated when building chest
 var Release struct {
@@ -22,6 +23,7 @@ var Release struct {
 func init() {
 
 	chestVMStop.Flags().StringVar(&vmID, "id", "", "The UUID for a virtual machine")
+	chestVMStart.Flags().BoolVarP(&foreground, "foreground", "f", false, "The UUID for a virtual machine")
 
 	// Add subcommands
 	chestVM.AddCommand(chestVMStart)
@@ -92,9 +94,12 @@ var chestVMStart = &cobra.Command{
 			log.Fatal(err)
 		}
 		uuid := fmt.Sprintf("%02x%02x%02x", b[0], b[1], b[2])
-
+		vmInterface := fmt.Sprintf("%s-%s", cfg.NicPrefix, uuid)
+		if len(vmInterface) > 15 {
+			log.Fatalf("The interface name [%s] is too long for the interface standard, shorten the nicPrefix", vmInterface)
+		}
 		// Create Tap Device (and add to bridge)
-		cfg.CreateTap(fmt.Sprintf("%s-%s", cfg.NicPrefix, uuid))
+		cfg.CreateTap(vmInterface)
 
 		// Generate MAC address using UUID and Mac prefix
 		mac := vmm.GenVMMac(cfg.NicMacPrefix, b)
@@ -102,7 +107,16 @@ var chestVMStart = &cobra.Command{
 		// Create Disk
 		vmm.CreateDisk(uuid, "4G")
 		// Start Virtual Machine
-		vmm.Start(mac, uuid, cfg.NicPrefix)
+		vmm.Start(mac, uuid, cfg.NicPrefix, foreground)
+
+		// If this is ran in the foreground then we will want to tidy up the created interface
+		if foreground {
+			log.Infof("Deleting interface [%s]", vmInterface)
+			err = cfg.DeleteTap(vmInterface)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 	},
 }
 
@@ -117,8 +131,10 @@ var chestVMStop = &cobra.Command{
 		// Stop Virtual Machine
 		vmm.Stop(vmID)
 		// Remove Networking configuration
-		cfg.DeleteTap(fmt.Sprintf("%s-%s", cfg.NicPrefix, vmID))
-
+		err = cfg.DeleteTap(fmt.Sprintf("%s-%s", cfg.NicPrefix, vmID))
+		if err != nil {
+			log.Fatal(err)
+		}
 		// TODO - Delete disk?
 	},
 }
