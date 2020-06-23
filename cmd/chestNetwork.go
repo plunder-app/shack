@@ -17,6 +17,7 @@ func init() {
 	chestNetwork.AddCommand(chestNetworkCreate)
 	chestNetwork.AddCommand(chestNetworkCheck)
 	chestNetwork.AddCommand(chestNetworkDelete)
+	chestNetwork.AddCommand(chestNetworkNat)
 }
 
 var chestNetworkCheck = &cobra.Command{
@@ -77,6 +78,24 @@ var chestNetworkDelete = &cobra.Command{
 		}
 
 		err = cfg.DeleteBridge()
+		if err != nil {
+			log.Warn(err)
+		}
+
+	},
+}
+
+var chestNetworkNat = &cobra.Command{
+	Use:   "nat",
+	Short: "Enable Nat",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("Chest Networking configuration\n")
+		cfg, err := network.OpenFile(configPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = cfg.EnableNat()
 		if err != nil {
 			log.Warn(err)
 		}

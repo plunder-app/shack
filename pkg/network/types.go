@@ -11,6 +11,10 @@ import (
 
 // Environment defines the configuration of the chest environment
 type Environment struct {
+
+	// Host configuration
+	Interface string `json:"interface"`
+
 	// Bridge configuration
 	BridgeName    string `json:"bridgeName"`
 	BridgeAddress string `json:"bridgeAddress"`
@@ -47,6 +51,7 @@ func OpenFile(path string) (*Environment, error) {
 // ExampleConfig will return a config output
 func ExampleConfig() string {
 	cfg := Environment{}
+	cfg.Interface = "eth0"
 	cfg.BridgeAddress = "192.168.1.1/24"
 	cfg.BridgeName = "plunder"
 	cfg.NicPrefix = "plndrVM"
