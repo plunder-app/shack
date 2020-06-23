@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var vmID string
+var vmUUID string
 var foreground bool
 
 // Release - this struct contains the release information populated when building chest
@@ -22,7 +22,7 @@ var Release struct {
 
 func init() {
 
-	chestVMStop.Flags().StringVar(&vmID, "id", "", "The UUID for a virtual machine")
+	chestVM.PersistentFlags().StringVar(&vmUUID, "id", "000000", "The UUID for a virtual machine")
 	chestVMStart.Flags().BoolVarP(&foreground, "foreground", "f", false, "The UUID for a virtual machine")
 
 	// Add subcommands
@@ -88,13 +88,16 @@ var chestVMStart = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		// Generate VM UUID
-		b, err := vmm.GenVMUUID()
-		if err != nil {
-			log.Fatal(err)
+		if vmUUID == "000000" {
+			// Generate VM UUID
+			b, err := vmm.GenVMUUID()
+			if err != nil {
+				log.Fatal(err)
+			}
+			vmUUID = fmt.Sprintf("%02x%02x%02x", b[0], b[1], b[2])
 		}
-		uuid := fmt.Sprintf("%02x%02x%02x", b[0], b[1], b[2])
-		vmInterface := fmt.Sprintf("%s-%s", cfg.NicPrefix, uuid)
+
+		vmInterface := fmt.Sprintf("%s-%s", cfg.NicPrefix, vmUUID)
 		if len(vmInterface) > 15 {
 			log.Fatalf("The interface name [%s] is too long for the interface standard, shorten the nicPrefix", vmInterface)
 		}
@@ -102,12 +105,13 @@ var chestVMStart = &cobra.Command{
 		cfg.CreateTap(vmInterface)
 
 		// Generate MAC address using UUID and Mac prefix
-		mac := vmm.GenVMMac(cfg.NicMacPrefix, b)
+		mac := vmm.GenVMMac(cfg.NicMacPrefix, vmUUID)
 
 		// Create Disk
-		vmm.CreateDisk(uuid, "4G")
+		vmm.CreateDisk(vmUUID, "4G")
+
 		// Start Virtual Machine
-		vmm.Start(mac, uuid, cfg.NicPrefix, foreground)
+		vmm.Start(mac, vmUUID, cfg.NicPrefix, foreground)
 
 		// If this is ran in the foreground then we will want to tidy up the created interface
 		if foreground {
@@ -129,9 +133,9 @@ var chestVMStop = &cobra.Command{
 			log.Fatal(err)
 		}
 		// Stop Virtual Machine
-		vmm.Stop(vmID)
+		vmm.Stop(vmUUID)
 		// Remove Networking configuration
-		err = cfg.DeleteTap(fmt.Sprintf("%s-%s", cfg.NicPrefix, vmID))
+		err = cfg.DeleteTap(fmt.Sprintf("%s-%s", cfg.NicPrefix, vmUUID))
 		if err != nil {
 			log.Fatal(err)
 		}

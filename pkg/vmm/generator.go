@@ -20,6 +20,9 @@ func GenVMUUID() (buf []byte, err error) {
 }
 
 // GenVMMac will create a mac address from the UUID and prefix
-func GenVMMac(prefix string, buf []byte) string {
-	return fmt.Sprintf("%s%02x:%02x:%02x", prefix, buf[0], buf[1], buf[2])
+func GenVMMac(prefix, s string) string {
+	for i := 2; i < len(s); i += 3 {
+		s = s[:i] + ":" + s[i:]
+	}
+	return fmt.Sprintf("%s%s", prefix, s)
 }
