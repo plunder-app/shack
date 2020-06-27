@@ -21,3 +21,17 @@ func CreateDisk(uuid, size string) error {
 
 	return nil
 }
+
+// DeleteDisk - will create a disk for a qemu instance
+func DeleteDisk(uuid string) error {
+	imagePath := fmt.Sprintf("%s.qcow2", uuid)
+
+	// Check file stats
+	_, err := os.Stat(imagePath)
+	// If it doesn't exist then create it
+	if os.IsNotExist(err) {
+		return fmt.Errorf("The VM Disk [%s] does not exist", imagePath)
+	}
+
+	return os.Remove(imagePath)
+}
