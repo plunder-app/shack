@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/plunder-app/chest/pkg/network"
+	"github.com/plunder-app/shack/pkg/network"
 
 	"github.com/spf13/cobra"
 )
 
-// Release - this struct contains the release information populated when building chest
+// Release - this struct contains the release information populated when building shack
 var Release struct {
 	Version string
 	Build   string
@@ -18,21 +18,21 @@ var Release struct {
 func init() {
 
 	// Main function commands
-	chestCmd.AddCommand(chestExample)
-	chestCmd.AddCommand(chestNetwork)
-	chestCmd.AddCommand(chestVM)
-	chestCmd.AddCommand(chestVersion)
+	shackCmd.AddCommand(shackExample)
+	shackCmd.AddCommand(shackNetwork)
+	shackCmd.AddCommand(shackVM)
+	shackCmd.AddCommand(shackVersion)
 }
 
-//chestCmd is the parent command
-var chestCmd = &cobra.Command{
-	Use:   "chest",
+//shackCmd is the parent command
+var shackCmd = &cobra.Command{
+	Use:   "shack",
 	Short: "This is a tool for building a deployment environment",
 }
 
 // Execute - starts the command parsing process
 func Execute() {
-	if err := chestCmd.Execute(); err != nil {
+	if err := shackCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -40,17 +40,17 @@ func Execute() {
 
 //// Sub commands
 
-var chestVersion = &cobra.Command{
+var shackVersion = &cobra.Command{
 	Use:   "version",
-	Short: "Version and Release information about the Chest enviroment manager",
+	Short: "Version and Release information about the shack enviroment manager",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Chest Release Information\n")
+		fmt.Printf("shack Release Information\n")
 		fmt.Printf("Version:  %s\n", Release.Version)
 		fmt.Printf("Build:    %s\n", Release.Build)
 	},
 }
 
-var chestNetwork = &cobra.Command{
+var shackNetwork = &cobra.Command{
 	Use:   "network",
 	Short: "Create the networking",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -58,7 +58,7 @@ var chestNetwork = &cobra.Command{
 	},
 }
 
-var chestExample = &cobra.Command{
+var shackExample = &cobra.Command{
 	Use:   "example",
 	Short: "Print example configuratiopn",
 	Run: func(cmd *cobra.Command, args []string) {

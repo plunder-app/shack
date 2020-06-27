@@ -1,6 +1,6 @@
 package main
 
-import "github.com/plunder-app/chest/cmd"
+import "github.com/plunder-app/shack/cmd"
 
 // Version is populated from the Makefile and is tied to the release TAG
 var Version string

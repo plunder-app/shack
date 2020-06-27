@@ -9,7 +9,7 @@ import (
 	"github.com/vishvananda/netlink"
 )
 
-// Environment defines the configuration of the chest environment
+// Environment defines the configuration of the shack environment
 type Environment struct {
 
 	// Host configuration

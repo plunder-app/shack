@@ -10,9 +10,9 @@ This section will detail the expected usage of `shack`.
 You can use `shack` to build and configure the environment, it will generate a example configuration that should work out of the box in most use-cases:
 
 ```
-./shack example > chest.yaml
+./shack example > shack.yaml
 
-$ cat chest.yaml 
+$ cat shack.yaml 
 bridgeAddress: 192.168.1.1/24
 bridgeName: plunder
 nicMacPrefix: 'c0:ff:ee:'
@@ -27,17 +27,17 @@ With the configuration in place we can use `shack` to set up all of the networki
 
 ```
 $ sudo ./shack network check
-Chest Networking configuration
+shack Networking configuration
 WARN[0000] Link not found  
 ```
-As we can see, we've not created our `chest` environment yet, so we'll create and check again (we will also inspect the networking with `ip link`):
+As we can see, we've not created our `shack` environment yet, so we'll create and check again (we will also inspect the networking with `ip link`):
 
 ```
 $ sudo ./shack network create
-Chest Networking configuration
+shack Networking configuration
 
 $ sudo ./shack network check
-Chest Networking configuration
+shack Networking configuration
 
 $ ip addr show plunder
 3: plunder: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default 
@@ -50,7 +50,7 @@ With the network in place we will start our virtual machine(s):
 
 ```
 $ sudo ./shack vm start
-Chest VM configuration
+shack VM configuration
 Network Device:	plunderVM-b5987b
 VM MAC Address:	c0:ff:ee:b5:98:7b
 VM UUID:	b5987b

@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/plunder-app/chest/pkg/network"
+	"github.com/plunder-app/shack/pkg/network"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -12,19 +12,19 @@ var configPath string
 
 func init() {
 
-	chestNetwork.PersistentFlags().StringVarP(&configPath, "config", "c", "chest.yaml", "The path to the chest environment configuration")
+	shackNetwork.PersistentFlags().StringVarP(&configPath, "config", "c", "shack.yaml", "The path to the shack environment configuration")
 
-	chestNetwork.AddCommand(chestNetworkCreate)
-	chestNetwork.AddCommand(chestNetworkCheck)
-	chestNetwork.AddCommand(chestNetworkDelete)
-	chestNetwork.AddCommand(chestNetworkNat)
+	shackNetwork.AddCommand(shackNetworkCreate)
+	shackNetwork.AddCommand(shackNetworkCheck)
+	shackNetwork.AddCommand(shackNetworkDelete)
+	shackNetwork.AddCommand(shackNetworkNat)
 }
 
-var chestNetworkCheck = &cobra.Command{
+var shackNetworkCheck = &cobra.Command{
 	Use:   "check",
 	Short: "check the bridge",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Chest Networking configuration\n")
+		fmt.Printf("shack Networking configuration\n")
 
 		cfg, err := network.OpenFile(configPath)
 		if err != nil {
@@ -39,11 +39,11 @@ var chestNetworkCheck = &cobra.Command{
 	},
 }
 
-var chestNetworkCreate = &cobra.Command{
+var shackNetworkCreate = &cobra.Command{
 	Use:   "create",
 	Short: "Create the bridge",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Chest Networking configuration\n")
+		fmt.Printf("shack Networking configuration\n")
 
 		cfg, err := network.OpenFile(configPath)
 		if err != nil {
@@ -67,11 +67,11 @@ var chestNetworkCreate = &cobra.Command{
 	},
 }
 
-var chestNetworkDelete = &cobra.Command{
+var shackNetworkDelete = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete the bridge",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Chest Networking configuration\n")
+		fmt.Printf("shack Networking configuration\n")
 		cfg, err := network.OpenFile(configPath)
 		if err != nil {
 			log.Fatal(err)
@@ -85,11 +85,11 @@ var chestNetworkDelete = &cobra.Command{
 	},
 }
 
-var chestNetworkNat = &cobra.Command{
+var shackNetworkNat = &cobra.Command{
 	Use:   "nat",
 	Short: "Enable Nat",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Chest Networking configuration\n")
+		fmt.Printf("shack Networking configuration\n")
 		cfg, err := network.OpenFile(configPath)
 		if err != nil {
 			log.Fatal(err)

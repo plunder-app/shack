@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/plunder-app/chest/pkg/network"
-	"github.com/plunder-app/chest/pkg/vmm"
+	"github.com/plunder-app/shack/pkg/network"
+	"github.com/plunder-app/shack/pkg/vmm"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -14,30 +14,30 @@ var foreground, vnc, disk bool
 
 func init() {
 
-	chestVM.PersistentFlags().StringVar(&vmUUID, "id", "000000", "The UUID for a virtual machine")
-	chestVMStart.Flags().BoolVarP(&foreground, "foreground", "f", false, "The UUID for a virtual machine")
-	chestVMStart.Flags().BoolVarP(&vnc, "vnc", "v", false, "Enable VNC")
-	chestVMStop.Flags().BoolVarP(&disk, "disk", "d", false, "Delete Disk")
+	shackVM.PersistentFlags().StringVar(&vmUUID, "id", "000000", "The UUID for a virtual machine")
+	shackVMStart.Flags().BoolVarP(&foreground, "foreground", "f", false, "The UUID for a virtual machine")
+	shackVMStart.Flags().BoolVarP(&vnc, "vnc", "v", false, "Enable VNC")
+	shackVMStop.Flags().BoolVarP(&disk, "disk", "d", false, "Delete Disk")
 
 	// Add subcommands
-	chestVM.AddCommand(chestVMStart)
-	chestVM.AddCommand(chestVMStop)
+	shackVM.AddCommand(shackVMStart)
+	shackVM.AddCommand(shackVMStop)
 }
 
-var chestVM = &cobra.Command{
+var shackVM = &cobra.Command{
 	Use:   "vm",
 	Short: "Create the networking",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Chest VM configuration\n")
+		fmt.Printf("shack VM configuration\n")
 		cmd.Help()
 	},
 }
 
-var chestVMStart = &cobra.Command{
+var shackVMStart = &cobra.Command{
 	Use:   "start",
 	Short: "Start a virtual Machine",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Chest VM configuration\n")
+		fmt.Printf("shack VM configuration\n")
 		cfg, err := network.OpenFile(configPath)
 		if err != nil {
 			log.Fatal(err)
@@ -78,7 +78,7 @@ var chestVMStart = &cobra.Command{
 	},
 }
 
-var chestVMStop = &cobra.Command{
+var shackVMStop = &cobra.Command{
 	Use:   "stop",
 	Short: "Stop a virtual Machine",
 	Run: func(cmd *cobra.Command, args []string) {
