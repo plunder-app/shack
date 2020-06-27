@@ -2,6 +2,7 @@ package vmm
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"os/exec"
 	"time"
@@ -22,8 +23,8 @@ import (
 // VMM - Virtual Machine Manager
 
 //Start w
-func Start(mac, uuid, nicPrefix string, foreground bool) error {
-
+func Start(mac, uuid, nicPrefix string, foreground, vnc bool) error {
+	var vncPort int
 	params := make([]string, 0, 32)
 
 	// Rootfs
@@ -44,6 +45,11 @@ func Start(mac, uuid, nicPrefix string, foreground bool) error {
 		return foreGroundRunner(params)
 	}
 
+	if vnc {
+		vncPort = vncPortGenerator()
+		params = append(params, "-vnc", fmt.Sprintf(":%d", vncPort))
+	}
+
 	params = append(params, "-daemonize", "-qmp", fmt.Sprintf("unix:/tmp/qmp-%s,server,nowait", uuid))
 
 	// LaunchCustomQemu should return as soon as the instance has launched as we
@@ -53,12 +59,18 @@ func Start(mac, uuid, nicPrefix string, foreground bool) error {
 	if err != nil {
 		return fmt.Errorf("%v : %v", details, err)
 	}
+
 	fmt.Printf("Network Device:\t%s-%s\nVM MAC Address:\t%s\nVM UUID:\t%s\n", nicPrefix, uuid, mac, uuid)
+
+	if vnc {
+		// Add the base VNC port (5900)
+		fmt.Printf("VNC Port:\t%d\n", (vncPort + 5900))
+	}
 	return nil
 }
 
 // Stop will allow us to stop a VM
-func Stop(uuid string) {
+func Stop(uuid string) error {
 	// This channel will be closed when the instance dies.
 	disconnectedCh := make(chan struct{})
 
@@ -68,13 +80,13 @@ func Stop(uuid string) {
 	// connect to the QMP socket and received the welcome message.
 	q, _, err := qemu.QMPStart(context.Background(), fmt.Sprintf("/tmp/qmp-%s", uuid), cfg, disconnectedCh)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("%v", err)
 	}
 
 	// This has to be the first command executed in a QMP session.
 	err = q.ExecuteQMPCapabilities(context.Background())
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("%v", err)
 	}
 
 	// Let's try to shutdown the VM.  If it hasn't shutdown in 10 seconds we'll
@@ -85,15 +97,16 @@ func Stop(uuid string) {
 	if err != nil {
 		err = q.ExecuteQuit(context.Background())
 		if err != nil {
-			panic(err)
+			return fmt.Errorf("%v", err)
 		}
 	}
 
 	q.Shutdown()
 	err = os.Remove(fmt.Sprintf("/tmp/qmp-%s", uuid))
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("%v", err)
 	}
+	return nil
 }
 
 func foreGroundRunner(params []string) error {
@@ -114,4 +127,11 @@ func foreGroundRunner(params []string) error {
 		return fmt.Errorf("Shell error [%v]", err)
 	}
 	return nil
+}
+
+func vncPortGenerator() int {
+	rand.Seed(time.Now().UnixNano())
+	port := 1 + rand.Intn(10000-1)
+
+	return port
 }
