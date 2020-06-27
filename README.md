@@ -1,5 +1,6 @@
 # Shack
 The Plunder Shack is virtual environment for developing and testing deployment tooling
+![](https://github.com/plunder-app/shack/blob/master/image/shack.png?raw=true)
 
 ## Usage
 
