@@ -1,16 +1,16 @@
-# chest
-The Plunder chest is virtual environment for developing and testing deployment tooling
+# Shack
+The Plunder Shack is virtual environment for developing and testing deployment tooling
 
 ## Usage
 
-This section will detail the expected usage of `chest`.
+This section will detail the expected usage of `shack`.
 
 ### Set Environment Configuration
 
-You can use `chest` to build and configure the environment, it will generate a example configuration that should work out of the box in most use-cases:
+You can use `shack` to build and configure the environment, it will generate a example configuration that should work out of the box in most use-cases:
 
 ```
-./chest example > chest.yaml
+./shack example > chest.yaml
 
 $ cat chest.yaml 
 bridgeAddress: 192.168.1.1/24
@@ -23,20 +23,20 @@ This configuration specifies the name of the bridge and it's address that it wil
 
 ### Configure Environment
 
-With the configuration in place we can use `chest` to set up all of the networking infrastructure we require for our virtual machines to live on. We can validate the environment with:
+With the configuration in place we can use `shack` to set up all of the networking infrastructure we require for our virtual machines to live on. We can validate the environment with:
 
 ```
-$ sudo ./chest network check
+$ sudo ./shack network check
 Chest Networking configuration
 WARN[0000] Link not found  
 ```
 As we can see, we've not created our `chest` environment yet, so we'll create and check again (we will also inspect the networking with `ip link`):
 
 ```
-$ sudo ./chest network create
+$ sudo ./shack network create
 Chest Networking configuration
 
-$ sudo ./chest network check
+$ sudo ./shack network check
 Chest Networking configuration
 
 $ ip addr show plunder
@@ -49,7 +49,7 @@ $ ip addr show plunder
 With the network in place we will start our virtual machine(s):
 
 ```
-$ sudo ./chest vm start
+$ sudo ./shack vm start
 Chest VM configuration
 Network Device:	plunderVM-b5987b
 VM MAC Address:	c0:ff:ee:b5:98:7b
@@ -71,10 +71,10 @@ $ ip addr show plunderVM-b5987
 
 ### Stop a virtual machine
 
-To stop a virtual machine `chest` will communicate with the qmp socket `/tmp/qmp-<UUID>`, we can stop our recently started Virtual machine with the command:
+To stop a virtual machine `shack` will communicate with the qmp socket `/tmp/qmp-<UUID>`, we can stop our recently started Virtual machine with the command:
 
 ```
-$  sudo ./chest vm stop --id b5987b
+$  sudo ./shack vm stop --id b5987b
 ```
 
 **Note** the `stop` command will wait for 10 seconds before "terminating" the virtual machine.
@@ -82,4 +82,4 @@ $  sudo ./chest vm stop --id b5987b
 
 ## Provisioning tooling
 
-In order to use `chest` as a demonstrating environment then configure your tooling to use the `bridgeName` as the interface to broadcast on and use the `bridgeAddress` as the server address/gateway for new machines.
+In order to use `shack` as a demonstrating environment then configure your tooling to use the `bridgeName` as the interface to broadcast on and use the `bridgeAddress` as the server address/gateway for new machines.
