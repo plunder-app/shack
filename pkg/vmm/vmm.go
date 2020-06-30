@@ -57,7 +57,7 @@ func Start(mac, uuid, nicPrefix string, foreground, vnc bool) error {
 	// in /tmp/qmp-uuid that we can use to manage the instance.
 	details, err := qemu.LaunchCustomQemu(context.Background(), "", params, nil, nil, nil)
 	if err != nil {
-		return fmt.Errorf("%v : %v", details, err)
+		return fmt.Errorf("%v", details)
 	}
 
 	fmt.Printf("Network Device:\t%s-%s\nVM MAC Address:\t%s\nVM UUID:\t%s\n", nicPrefix, uuid, mac, uuid)
