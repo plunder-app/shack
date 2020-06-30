@@ -62,10 +62,16 @@ var shackVMStart = &cobra.Command{
 		mac := vmm.GenVMMac(cfg.NicMacPrefix, vmUUID)
 
 		// Create Disk
-		vmm.CreateDisk(vmUUID, "4G")
+		err = vmm.CreateDisk(vmUUID, "4G")
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		// Start Virtual Machine
-		vmm.Start(mac, vmUUID, cfg.NicPrefix, foreground, vnc)
+		err = vmm.Start(mac, vmUUID, cfg.NicPrefix, foreground, vnc)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		// If this is ran in the foreground then we will want to tidy up the created interface
 		if foreground {
