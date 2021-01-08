@@ -28,7 +28,8 @@ func Start(mac, uuid, nicPrefix string, foreground, vnc bool) error {
 	params := make([]string, 0, 32)
 
 	// Rootfs
-	params = append(params, "-drive", fmt.Sprintf("file=%s.qcow2,if=virtio,aio=threads,format=qcow2", uuid))
+	//params = append(params, "-drive", fmt.Sprintf("file=%s.qcow2,if=virtio,aio=threads,format=qcow2", uuid))
+	params = append(params, "-drive", fmt.Sprintf("file=%s.qcow2,aio=threads,format=qcow2", uuid))
 
 	// Network
 	net := fmt.Sprintf("tap,model=virtio-net-pci,mac=%s,ifname=%s-%s", mac, nicPrefix, uuid)
@@ -38,7 +39,7 @@ func Start(mac, uuid, nicPrefix string, foreground, vnc bool) error {
 	params = append(params, "-enable-kvm", "-cpu", "host")
 
 	// resources
-	params = append(params, "-m", "1024", "-display", "none")
+	params = append(params, "-m", "4096", "-display", "none")
 
 	if foreground {
 		params = append(params, "-curses")
